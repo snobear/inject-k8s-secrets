@@ -1,5 +1,9 @@
 # inject-k8s-secrets
-Bash script to inject AWS Secrets Manager Secrets into Kubernetes secrets.
+
+This is a bash helper script that:
+- Retrieves AWS Secrets Manager Secrets with the aws cli under a given prefix (defined at top of script)
+- Converts the secrets from the form `some/secret/thing` into Kubernetes-friendly secret name format: `some-secret-thing`
+- Inject the secrets into the k8s cluster using `kubectl`
 
 ## Usage
 
@@ -7,7 +11,7 @@ Bash script to inject AWS Secrets Manager Secrets into Kubernetes secrets.
 ./inject.sh cluster namespace region profile
 ```
 
-example:
+**Example**
 
 ```
 ./inject.sh foocluster app us-west-2 someawsprofilename
