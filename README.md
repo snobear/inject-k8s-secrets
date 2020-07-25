@@ -22,5 +22,5 @@ AWS Secret name                                   ----> k8s Secret Name
 ====================                                    ====================
 myapp/dev/api/db/dbpass                                 api-db-dbpass
 myapp/dev/api/api_key_foo                               api-api-key-foo
-myapp/dev/parser/backend/redis-pw                        parser-backend-redis-pw
+myapp/dev/parser/backend/redis-pw                       parser-backend-redis-pw
 ```
