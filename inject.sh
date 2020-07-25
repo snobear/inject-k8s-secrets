@@ -1,18 +1,16 @@
 #!/bin/bash
 # Iterate through list of all secrets in AWS Secrets Manager and inject into cluster as k8s secrets
 
-# CHANGE ME to the namespace your secrets live under in Secrets Manager
-secret_prefix="myapp/dev"
-
-if [[ $# -ne 4 ]] ; then
-    echo "usage: $0 cluster namespace region profile" >&2
+if [[ $# -ne 5 ]] ; then
+    echo "usage: $0 secret_prefix cluster namespace region profile" >&2
     exit 2
 fi
 
-cluster=$1
-namespace=$2
-AWS_REGION=$3
-AWS_PROFILE=$4
+secret_prefix=$1
+cluster=$2
+namespace=$3
+AWS_REGION=$4
+AWS_PROFILE=$5
 
 # kubectl client 1.18 introduced some breaking changes with --dry-run
 kubectl_ver=$(kubectl version --client=true -o json | jq -rj '.clientVersion | .major, ".", .minor')
