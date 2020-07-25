@@ -44,7 +44,7 @@ for secret_name in $(aws secretsmanager list-secrets --profile ${AWS_PROFILE} --
     value=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query 'SecretString' --output text --region ${AWS_REGION})
  
     if [[ -z $value ]]; then
-        echo "warning: secret value is empty for secret_name=${secret_name}. skipping k8s secret injection."
+        echo "warning: secret value is empty for secret_name=${secret_name}. not injecting this secret."
     else
         if [[ ${secret_count} -eq 1 ]]; then
             # table header
