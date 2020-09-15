@@ -63,5 +63,5 @@ done
 unset value
 
 if [[ $secret_count -eq 0 ]]; then
-    echo "No secrets found in AWS Secrets Manager for ${namespace}."
+    echo "No secrets found in AWS Secrets Manager for secret name prefix ${secret_prefix}."
 fi
