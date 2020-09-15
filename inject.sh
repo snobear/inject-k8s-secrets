@@ -23,7 +23,7 @@ echo "Injecting all secrets under ${secret_prefix} from AWS Secrets Manager into
 
 secret_count=0
 
-# iterate through list of all secrets in AWS Secrets Manager for this stack
+# iterate through list of all secrets in AWS Secrets Manager for a given prefix
 for secret_name in $(aws secretsmanager list-secrets --profile ${AWS_PROFILE} --region ${AWS_REGION} --query 'SecretList[?Name!=`null`]|[?starts_with(Name, `'${secret_prefix}'`) == `true`].Name' --output text); do
     secret_count=$((secret_count+1))
 
@@ -56,12 +56,12 @@ for secret_name in $(aws secretsmanager list-secrets --profile ${AWS_PROFILE} --
         printf "%-70s %s\n" ${secret_name} ${k8s_secret_name}
 
         # this is currently the best method to "upsert" a secret, other than deleting and recreating it.
-        kubectl create secret generic ${k8s_secret_name} --from-literal=password=${value} -n ${stack} ${dry_run_flag} -o yaml | kubectl apply -f - > /dev/null
+        kubectl create secret generic ${k8s_secret_name} --from-literal=password=${value} -n ${namespace} ${dry_run_flag} -o yaml | kubectl apply -f - > /dev/null
     fi
 done
 
 unset value
 
 if [[ $secret_count -eq 0 ]]; then
-    echo "No secrets found in AWS Secrets Manager for ${stack}."
+    echo "No secrets found in AWS Secrets Manager for ${namespace}."
 fi
