@@ -5,6 +5,8 @@ This is a bash helper script that:
 - Converts the secret name format into Kubernetes-friendly naming
 - Inject the secrets into the k8s cluster using `kubectl`
 
+See my related article: [Injecting Secrets from AWS Secrets Manager into Kubernetes](https://medium.com/@jashby2/injecting-secrets-from-aws-secrets-manager-into-kubernetes-9aad3c98e078)
+
 ## Usage
 
 ```
