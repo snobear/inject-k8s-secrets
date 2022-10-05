@@ -21,6 +21,8 @@ fi
 
 echo "Injecting all secrets under ${secret_prefix} from AWS Secrets Manager into cluster ${cluster}, namespace ${namespace}"
 
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
 secret_count=0
 
 # iterate through list of all secrets in AWS Secrets Manager for a given prefix
@@ -56,7 +58,30 @@ for secret_name in $(aws secretsmanager list-secrets --profile ${AWS_PROFILE} --
         printf "%-70s %s\n" ${secret_name} ${k8s_secret_name}
 
         # this is currently the best method to "upsert" a secret, other than deleting and recreating it.
-        kubectl create secret generic ${k8s_secret_name} --from-literal=password=${value} -n ${namespace} ${dry_run_flag} -o yaml | kubectl apply -f - > /dev/null
+        declare -A array
+        while IFS= read -rd '' key && IFS= read -rd '' value
+        do
+            array[$key]=$value
+        done < <(
+            set -o pipefail
+            echo ${value} |
+                jq -j '
+                    to_entries[] |
+                    [.key, .value | tostring] |
+                    map(gsub("\u0000"; "") + "\u0000") |
+                    add'
+        )
+
+        echo "-----------------"
+        i=0 args=()
+        for k in "${!array[@]}"
+        do
+            echo "Adding key  : $k"
+            args[$i]=" --from-literal=${k}=${array[$k]}"
+            ((++i))
+        done
+        fargs=$(join_by ' ' "${args[@]}")
+        kubectl create secret generic ${k8s_secret_name} ${fargs} -n ${namespace} ${dry_run_flag} -o yaml | kubectl apply -f - > /dev/null
     fi
 done
 
